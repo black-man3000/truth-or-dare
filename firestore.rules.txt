@@ -1,0 +1,54 @@
+// ==========================================================
+// FIRESTORE SECURITY RULES
+// ----------------------------------------------------------
+// Test mode (which you started with) allows anyone to read
+// and write ANYTHING for 30 days, then locks everyone out.
+// Paste this into: Firebase Console → Firestore Database →
+// Rules tab → replace everything → Publish.
+//
+// This keeps things reasonably safe: only logged-in users can
+// read/write, and only the owner of a document can edit it,
+// while still letting people search each other and see
+// friend requests sent to them.
+// ==========================================================
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Username lookups must work BEFORE login (to check availability during
+    // signup, and to turn a typed username into an email for login) — so
+    // reads here are public. Creating a new username mapping still
+    // requires being logged in (happens right after account creation).
+    match /usernames/{username} {
+      allow read: if true;
+      allow create: if request.auth != null;
+    }
+
+    // Anyone logged in can search/view profiles; only the owner can edit their own
+    match /users/{uid} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Friend requests: sender can create, either side can read/update their own
+    match /friendRequests/{requestId} {
+      allow read: if request.auth != null &&
+        (resource.data.fromUid == request.auth.uid || resource.data.toUid == request.auth.uid);
+      allow create: if request.auth != null && request.resource.data.fromUid == request.auth.uid;
+      allow update: if request.auth != null &&
+        (resource.data.fromUid == request.auth.uid || resource.data.toUid == request.auth.uid);
+    }
+
+    // Friends list: only the owner can read/write their own list
+    match /friends/{uid}/list/{friendUid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Notifications: only the owner can read/update their own; anyone
+    // logged in can create one FOR someone else (e.g. sending a friend request)
+    match /notifications/{uid}/items/{notifId} {
+      allow read, update: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null;
+    }
+  }
+}

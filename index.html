@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Truth or Dare</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ======================================================
+     AUTH SCREEN (Login / Sign Up)
+     ====================================================== -->
+<div id="authScreen" class="auth-screen">
+  <div class="auth-card">
+    <div class="logo">
+      <span class="logo-truth">Truth</span><span class="logo-or">or</span><span class="logo-dare">Dare</span>
+    </div>
+    <p class="auth-tagline">Play, create, and share with friends 🔥</p>
+
+    <!-- Login Form -->
+    <form id="loginForm" class="auth-form">
+      <input type="text" id="loginUsername" placeholder="Username" required autocomplete="username">
+      <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
+      <p class="error-msg" id="loginError"></p>
+      <button type="submit" class="btn btn-primary">Log In</button>
+      <p class="switch-auth">New here? <a href="#" id="showSignup">Create an account</a></p>
+    </form>
+
+    <!-- Signup Form -->
+    <form id="signupForm" class="auth-form hidden">
+      <input type="text" id="signupUsername" placeholder="Choose a username" required>
+      <input type="text" id="signupDisplayName" placeholder="Display name" required>
+      <input type="password" id="signupPassword" placeholder="Choose a password" required>
+      <input type="password" id="signupPassword2" placeholder="Confirm password" required>
+      <p class="error-msg" id="signupError"></p>
+      <button type="submit" class="btn btn-primary">Sign Up</button>
+      <p class="switch-auth">Already have an account? <a href="#" id="showLogin">Log in</a></p>
+    </form>
+  </div>
+</div>
+
+<!-- ======================================================
+     MAIN APP (hidden until logged in)
+     ====================================================== -->
+<div id="appScreen" class="app-screen hidden">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="logo small">
+      <span class="logo-truth">Truth</span><span class="logo-or">or</span><span class="logo-dare">Dare</span>
+    </div>
+    <div class="topbar-right">
+      <span id="welcomeUser" class="welcome-user"></span>
+      <button id="logoutBtn" class="btn btn-ghost">Log Out</button>
+    </div>
+  </header>
+
+  <!-- Bottom / side nav (tabs) -->
+  <nav class="tabbar">
+    <button class="tab-btn active" data-tab="home">🏠<span>Home</span></button>
+    <button class="tab-btn" data-tab="notifications">🔔<span>Alerts</span><span id="notifBadge" class="badge-dot hidden"></span></button>
+    <button class="tab-btn" data-tab="truth">💭<span>Truth</span></button>
+    <button class="tab-btn" data-tab="dare">🎯<span>Dare</span></button>
+    <button class="tab-btn" data-tab="create">✍️<span>Create</span></button>
+    <button class="tab-btn" data-tab="friends">🧑‍🤝‍🧑<span>Friends</span></button>
+    <button class="tab-btn" data-tab="profile">👤<span>Profile</span></button>
+  </nav>
+
+  <main class="content">
+
+    <!-- ---------------- HOME / FEED ---------------- -->
+    <section id="home-section" class="tab-section active">
+      <h2 class="section-title">Community Feed</h2>
+      <p class="section-subtitle">Truths & dares written by players like you</p>
+      <div id="feedList" class="feed-list"></div>
+    </section>
+
+    <!-- ---------------- TRUTH ---------------- -->
+    <section id="truth-section" class="tab-section">
+      <h2 class="section-title">Truth 💭</h2>
+      <label class="field-label" for="truthCategory">Pick a topic</label>
+      <select id="truthCategory" class="category-select"></select>
+      <div class="prompt-card" id="truthCard">
+        <p id="truthText">Tap the button to get a truth question!</p>
+        <span id="truthMeta" class="prompt-meta"></span>
+      </div>
+      <button id="truthDrawBtn" class="btn btn-primary btn-block">Give Me a Truth</button>
+    </section>
+
+    <!-- ---------------- DARE ---------------- -->
+    <section id="dare-section" class="tab-section">
+      <h2 class="section-title">Dare 🎯</h2>
+      <label class="field-label" for="dareCategory">Pick a topic</label>
+      <select id="dareCategory" class="category-select"></select>
+      <div class="prompt-card" id="dareCard">
+        <p id="dareText">Tap the button to get a dare!</p>
+        <span id="dareMeta" class="prompt-meta"></span>
+      </div>
+      <button id="dareDrawBtn" class="btn btn-primary btn-block">Give Me a Dare</button>
+    </section>
+
+    <!-- ---------------- CREATE ---------------- -->
+    <section id="create-section" class="tab-section">
+      <h2 class="section-title">Write Your Own ✍️</h2>
+      <form id="createForm" class="create-form">
+        <label class="field-label">Type</label>
+        <div class="radio-group">
+          <label><input type="radio" name="createType" value="truth" checked> Truth</label>
+          <label><input type="radio" name="createType" value="dare"> Dare</label>
+        </div>
+
+        <label class="field-label" for="createCategory">Category</label>
+        <select id="createCategory" class="category-select"></select>
+        <input type="text" id="newCategoryInput" placeholder="...or type a new category" class="text-input">
+
+        <label class="field-label" for="createText">Your question / task</label>
+        <textarea id="createText" rows="3" placeholder="Write something fun, deep, or wild..." required></textarea>
+
+        <button type="submit" class="btn btn-primary btn-block">Post to Feed</button>
+        <p class="success-msg" id="createSuccess"></p>
+      </form>
+    </section>
+
+    <!-- ---------------- NOTIFICATIONS ---------------- -->
+    <section id="notifications-section" class="tab-section">
+      <h2 class="section-title">Notifications 🔔</h2>
+      <p class="section-subtitle">Friend activity and updates</p>
+      <div id="notificationsList" class="feed-list"></div>
+    </section>
+
+    <!-- ---------------- FRIENDS ---------------- -->
+    <section id="friends-section" class="tab-section">
+      <h2 class="section-title">Friends 🧑‍🤝‍🧑</h2>
+      <p class="section-subtitle">Find people to play with, from anywhere</p>
+
+      <div class="search-row">
+        <input type="text" id="friendSearchInput" class="text-input" placeholder="Search by username...">
+        <button id="friendSearchBtn" class="btn btn-primary">Search</button>
+      </div>
+      <div id="searchResults" class="feed-list"></div>
+
+      <h3 class="section-title small">Requests</h3>
+      <div id="incomingRequests" class="feed-list"></div>
+
+      <h3 class="section-title small">Your Friends</h3>
+      <div id="friendsList" class="feed-list"></div>
+    </section>
+
+    <!-- ---------------- PROFILE ---------------- -->
+    <section id="profile-section" class="tab-section">
+      <div class="profile-header">
+        <div id="profileAvatar" class="avatar-lg"></div>
+        <h2 id="profileName"></h2>
+        <p id="profileUsername" class="profile-username"></p>
+      </div>
+      <div class="stats-row">
+        <div class="stat-box"><span id="statPosts">0</span><small>Posts</small></div>
+        <div class="stat-box"><span id="statLikes">0</span><small>Likes</small></div>
+        <div class="stat-box"><span id="statJoined">-</span><small>Joined</small></div>
+      </div>
+      <h3 class="section-title small">Your Posts</h3>
+      <div id="myPostsList" class="feed-list"></div>
+    </section>
+
+  </main>
+</div>
+
+<script src="data.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>
